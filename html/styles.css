@@ -1,0 +1,25 @@
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+header { background: #333; color: white; padding: 10px; text-align: center; }
+nav a { color: white; text-decoration: none; margin: 0 10px; }
+main { padding: 20px; }
+form input, form select, form textarea, form button {
+    display: block; margin-top: 10px; padding: 8px; width: 300px;
+}
+footer { background: #333; color: white; text-align: center; padding: 10px; position: fixed; width: 100%; bottom: 0; }
+
+.create-btn {
+    display: block;
+    width: 200px;
+    margin: 0 auto 30px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #0073e6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+}
+.create-btn:hover {
+    background: #005bb5;
+}
