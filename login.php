@@ -4,6 +4,13 @@ header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 
+// If it's a preflight request, return early
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204); // No Content
+    exit;
+}
+
+// Only allow POST requests beyond this point
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Only POST requests are allowed']);
