@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RSOs</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .columns {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .column {
+            width: 30%;
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+        .column h3 {
+            text-align: center;
+            background: #f0f0f0;
+            padding: 10px;
+            margin-top: 0;
+        }
+        .column p.subheader {
+            text-align: center;
+            font-style: italic;
+            margin: 0 0 15px;
+            color: #666;
+        }
+        .event {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ccc;
+        }
+        .event a {
+            color: #0073e6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .event a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>College Events</h1>
+    <nav>
+        <a href="index.html">Home</a> |
+        <a href="dashboard.html">Events</a> |
+        
+        <a href="rsos.html">RSOs</a> |
+        <a href="universities.html">Universities</a>
+    </nav>
+</header>
+<main>
+    <h2 style="text-align:center;">My RSOs</h2>
+    <div class="columns">
+        <div class="column">
+            <h3>UCF Esports</h3>
+            <p class="subheader">Esports at UCF</p>
+        </div>
+        <div class="column">
+            <h3>Hackathon</h3>
+            <p class="subheader">blah blah</p>
+        </div>
+        <div class="column">
+            <h3>RSO 3</h3>
+            <p class="subheader">blah blah</p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+        <a class="create-btn" href="create_rso.html">+ Create RSO</a>
+        <a class="create-btn" href="join_rso.html" style="margin-top: 10px;">+ Join RSO</a>
+    </div>
+
+</main>
+<footer>
+    <p style="text-align:center;">&copy; 2025 College Events</p>
+</footer>
+</body>
+</html>

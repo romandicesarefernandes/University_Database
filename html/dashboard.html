@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Events - College Events</title>
+        <link rel="stylesheet" href="styles.css">
+        <style>
+        .columns {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .column {
+            width: 30%;
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+        .column h3 {
+            text-align: center;
+            background: #f0f0f0;
+            padding: 10px;
+            margin-top: 0;
+        }
+        .column p.subheader {
+            text-align: center;
+            font-style: italic;
+            margin: 0 0 15px;
+            color: #666;
+        }
+        .event {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ccc;
+        }
+        .event a {
+            color: #0073e6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .event a:hover {
+            text-decoration: underline;
+        }
+
+        .create-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 20px auto;
+            display: none; /* hidden by default */
+        }
+
+        .center {
+            text-align: center;
+        }
+    </style>
+    </head>
+    <body>
+        <header>
+            <h1>College Events</h1>
+            <nav>
+                <a href="index.html">Home</a> |
+                <a href="dashboard.html">Events</a> |
+                <a href="rsos.html">RSOs</a> |
+                <a href="universities.html">Universities</a>
+            </nav>
+        </header>
+        <main>
+            <div class="center">
+                <a class="create-btn" href="create_event.html"
+                    id="create-event-link">+ Create New Event</a>
+            </div>
+
+            <h2 style="text-align:center;">Events by Visibility</h2>
+            <div class="columns">
+                <div class="column">
+                    <h3>🌐 Public Events</h3>
+                    <p class="subheader">Available to everyone</p>
+                    <div class="event">
+                        <a href="event.html">Fundraiser: Clean Water
+                            Drive</a><br>
+                        Everyone can view this event.
+                    </div>
+                    <div class="event">
+                        <a href="event.html">Community BBQ</a><br>
+                        A family-friendly public gathering.
+                    </div>
+                </div>
+                <div class="column">
+                    <h3>🔒 Private Events</h3>
+                    <p class="subheader">Visible only to students of the host
+                        university</p>
+                    <div class="event">
+                        <a href="event.html">University Career Fair</a><br>
+                        Only visible to students from UCF.
+                    </div>
+                    <div class="event">
+                        <a href="event.html">Student Orientation</a><br>
+                        For enrolled students only.
+                    </div>
+                </div>
+                <div class="column">
+                    <h3>🧑‍🤝‍🧑 RSO Events</h3>
+                    <p class="subheader">Exclusive to members of the hosting
+                        RSO</p>
+                    <div class="event">
+                        <a href="event.html">Chess Club Tournament</a><br>
+                        Members of the Chess Club only.
+                    </div>
+                    <div class="event">
+                        <a href="event.html">Hackathon Planning Meeting</a><br>
+                        Exclusive to RSO Techies United.
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p style="text-align:center;">&copy; 2025 College Events</p>
+        </footer>
+        <script>
+    const userData = JSON.parse(localStorage.getItem("user"));
+    const role = userData?.role;
+
+    const createBtn = document.getElementById("create-event-link");
+
+    if (role === "admin") {
+        createBtn.style.display = "inline-block"; // show button if admin
+    } else {
+        // Prevent direct access to create_event.html
+        if (window.location.pathname.includes("create_event.html")) {
+            alert("Access denied. Admins only.");
+            window.location.href = "index.html";
+        }
+    }
+</script>
+    </body>
+</html>

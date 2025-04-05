@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Create Event</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>College Events</h1>
+            <nav>
+                <a href="index.html">Home</a> |
+                <a href="dashboard.html">Events</a> |
+                <a href="rsos.html">RSOs</a> |
+                <a href="universities.html">Universities</a>
+            </nav>
+        </header>
+        <main>
+            <h2>Create New Event</h2>
+            <form id="eventForm">
+                <label>Event Name:</label><br>
+                <input type="text" name="name"><br>
+
+                <label>Category:</label><br>
+                <select name="category">
+                    <option value="social">Social</option>
+                    <option value="fundraising">Fundraising</option>
+                    <option value="tech_talk">Tech Talk</option>
+                    <option value="other">Other</option>
+                </select><br>
+
+                <label>Date:</label><br>
+                <input type="date" name="date"><br>
+
+                <label>Time:</label><br>
+                <input type="time" name="time"><br>
+
+                <label>Location Name:</label><br>
+                <input type="text" name="location_name"><br>
+
+                <label>Latitude:</label><br>
+                <input type="text" name="latitude"><br>
+
+                <label>Longitude:</label><br>
+                <input type="text" name="longitude"><br>
+
+                <label>Contact Phone:</label><br>
+                <input type="tel" name="contact_phone"><br>
+
+                <label>Contact Email:</label><br>
+                <input type="email" name="contact_email"><br>
+
+                <label>Event Visibility:</label><br>
+                <select name="visibility">
+                    <option value="public">Public (visible to everyone)</option>
+                    <option value="private">Private (only students at your
+                        university)</option>
+                    <option value="rso_only">RSO Only (members of your
+                        RSO)</option>
+                </select><br>
+
+                <label>Associated RSO (if any):</label><br>
+                <input type="text" name="rso"><br>
+
+                <label>Requires Super Admin Approval:</label>
+                <input type="checkbox" name="requires_approval"><br><br>
+
+                <button type="submit">Submit</button>
+            </form>
+        </main>
+        <footer><p>&copy; 2025 College Events</p></footer>
+
+        <script>
+document.getElementById('eventForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+
+    const data = {
+        admin_id: 1,
+        role: "admin",
+        university_id: 2,
+        rso_id: form.rso.value || null,
+        name: form.name.value,
+        category: form.category.value,
+        description: "A talk on how AI is changing the world.", // or use a <textarea name="description">
+        event_time: `${form.date.value} ${form.time.value}:00`,
+        location_name: form.location_name.value,
+        contact_phone: form.contact_phone.value,
+        contact_email: form.contact_email.value,
+        visibility: form.visibility.value
+    };
+
+    try {
+        const response = await fetch('http://143.198.6.92/University_Database/createevent.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert('Event created successfully!');
+            form.reset();
+        } else {
+            alert('Failed to create event.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('An error occurred while submitting the event.');
+    }
+});
+</script>
+    </body>
+</html>
