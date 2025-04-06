@@ -4,6 +4,9 @@
         <meta charset="UTF-8">
         <title>Create Event</title>
         <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     </head>
     <body>
         <header>
@@ -18,6 +21,11 @@
         <main>
             <h2>Create New Event</h2>
             <form id="eventForm">
+                <!-- Hidden Inputs for Admin Data -->
+                <input type="hidden" name="admin_id" value="1">
+                <input type="hidden" name="role" value="admin">
+                <input type="hidden" name="university_id" value="2">
+
                 <label>Event Name:</label><br>
                 <input type="text" name="name"><br>
 
@@ -29,6 +37,12 @@
                     <option value="other">Other</option>
                 </select><br>
 
+                <label>Description:</label><br>
+                <textarea name="description" rows="4"
+                    cols="50">
+               
+                </textarea><br>
+
                 <label>Date:</label><br>
                 <input type="date" name="date"><br>
 
@@ -37,12 +51,6 @@
 
                 <label>Location Name:</label><br>
                 <input type="text" name="location_name"><br>
-
-                <label>Latitude:</label><br>
-                <input type="text" name="latitude"><br>
-
-                <label>Longitude:</label><br>
-                <input type="text" name="longitude"><br>
 
                 <label>Contact Phone:</label><br>
                 <input type="tel" name="contact_phone"><br>
@@ -62,55 +70,85 @@
                 <label>Associated RSO (if any):</label><br>
                 <input type="text" name="rso"><br>
 
-                <label>Requires Super Admin Approval:</label>
-                <input type="checkbox" name="requires_approval"><br><br>
-
+                <label>Select Location on Map:</label><br>
+                <div id="map" style="height: 300px; margin-bottom: 10px;"></div>
                 <button type="submit">Submit</button>
             </form>
         </main>
         <footer><p>&copy; 2025 College Events</p></footer>
 
         <script>
-document.getElementById('eventForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+        document.getElementById('eventForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+ const userData = JSON.parse(localStorage.getItem("user"));
+    const role = userData?.role;
+    alert(latitude + " " + longitude);
+            const data = {
+                //admin_id: parseInt(form.admin_id.value),
+                role: role,
+                university_id: userData?.university_id,
+                rso_id: form.rso.value || null,
+                name: form.name.value,
+                admin_id: 1, // Hardcoded for now, replace with actual admin ID
+               // latitude: latitude, uncomment this when the databse is updated
+               // longitude: longitude, uncomment this when databse is uodated
+                category: form.category.value,
+                description: form.description.value,
+                event_time: `${form.date.value} ${form.time.value}:00`,
+                location_name: form.location_name.value,
+                contact_phone: form.contact_phone.value,
+                contact_email: form.contact_email.value,
+                visibility: form.visibility.value
+            };
 
-    const form = e.target;
+            console.log(data); // Debugging line to check the data being sent
 
-    const data = {
-        admin_id: 1,
-        role: "admin",
-        university_id: 2,
-        rso_id: form.rso.value || null,
-        name: form.name.value,
-        category: form.category.value,
-        description: "A talk on how AI is changing the world.", // or use a <textarea name="description">
-        event_time: `${form.date.value} ${form.time.value}:00`,
-        location_name: form.location_name.value,
-        contact_phone: form.contact_phone.value,
-        contact_email: form.contact_email.value,
-        visibility: form.visibility.value
-    };
+            try {
+                const response = await fetch('http://143.198.6.92/University_Database/createevent.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
 
-    try {
-        const response = await fetch('http://143.198.6.92/University_Database/createevent.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+                if (response.ok) {
+                    alert('Event created successfully!');
+                    form.reset();
+                } else {
+                    alert('Failed to create event.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while submitting the event.');
+            }
         });
+    </script>
 
-        if (response.ok) {
-            alert('Event created successfully!');
-            form.reset();
-        } else {
-            alert('Failed to create event.');
-        }
-    } catch (err) {
-        console.error(err);
-        alert('An error occurred while submitting the event.');
-    }
-});
-</script>
+        <script>
+        let map = L.map('map').setView([37.7749, -122.4194], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker;
+
+        map.on('click', function(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            marker = L.marker([lat, lng]).addTo(map);
+            latitude = lat;
+            longitude = lng;
+          //  document.querySelector('input[name="latitude"]').value = lat;
+           // document.querySelector('input[name="longitude"]').value = lng;
+        });
+    </script>
     </body>
 </html>
