@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>RSOs</title>
+        <link rel="stylesheet" href="styles.css">
+        <style>
+        .columns {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            padding: 20px;
+            gap: 20px;
+        }
+        .column {
+            width: 30%;
+            min-width: 250px;
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+        .column h3 {
+            text-align: center;
+            background: #f0f0f0;
+            padding: 10px;
+            margin-top: 0;
+        }
+        .column p.subheader {
+            text-align: center;
+            font-style: italic;
+            margin: 0 0 15px;
+            color: #666;
+        }
+        .create-btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #0073e6;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+    </head>
+    <body>
+        <header>
+            <h1>College Events</h1>
+            <nav id="main-nav">
+                <a href="index.html">Home</a> |
+                <a href="dashboard.html">Events</a> |
+                <a href="rsos.html">RSOs</a> |
+                <span id="universities-link" style="display: none;">
+                    | <a href="universities.html">Universities</a>
+                </span>
+            </nav>
+        </header>
+
+        <main>
+            <h2 style="text-align:center;">My RSOs</h2>
+
+            <div class="columns" id="rsoContainer">
+                <!-- RSOs will be inserted here -->
+
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a class="create-btn" href="create_rso.html">+ Create RSO</a>
+
+            </div>
+
+        </main>
+
+        <footer>
+            <p style="text-align:center;">&copy; 2025 College Events</p>
+        </footer>
+        <script>
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log("User Data:", user);
+        if (user?.role === "admin") {
+            document.getElementById("universities-link").style.display = "inline";
+        }
+    </script>
+        <script>
+        const universityId = 1; // change as needed or get dynamically
+        fetch(`http://localhost/get_rso.php?university_id=${universityId}`)
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('rsoContainer');
+                if (data.success && data.count > 0) {
+                    data.rsos.forEach(rso => {
+                        const div = document.createElement('div');
+                        div.className = 'column';
+                       div.innerHTML = `
+    <h3>${rso.name}</h3>
+    <p class="subheader">${rso.description || 'No description'}</p>
+    <div style="text-align:center;">
+        <button class="create-btn" onclick="viewRSO(${rso.id})">Join RSO</button>
+    </div>
+`;
+                        container.appendChild(div);
+                    });
+                } else {
+                    container.innerHTML = `<p style="text-align:center;">No RSOs found for this university.</p>`;
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching RSOs:', err);
+                document.getElementById('rsoContainer').innerHTML = `<p style="text-align:center;">Failed to load RSOs.</p>`;
+            });
+    </script>
+    </body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Register</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>College Events</h1>
+            <nav id="main-nav">
+                <a href="index.html">Home</a> |
+                <a href="dashboard.html">Events</a> |
+                <a href="rsos.html">RSOs</a> |
+                <span id="universities-link" style="display: none;">
+                    | <a href="universities.html">Universities</a>
+                </span>
+            </nav>
+        </header>
+
+        <main>
+            <h2>Register</h2>
+            <form id="registerForm">
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" required><br>
+
+                <label for="password">Password:</label><br>
+                <input type="password" id="password" required><br>
+
+                <label for="university">University ID:</label><br>
+                <input type="number" id="university" required value="1"><br>
+
+                <label for="role">Role:</label><br>
+                <select id="role" required>
+                    <option value="student">Student</option>
+                    <option value="rso_admin">RSO Admin</option>
+                    <option value="admin">Super Admin</option>
+                </select><br><br>
+
+                <button type="submit">Register</button>
+            </form>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 College Events</p>
+        </footer>
+        <script>
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log("User Data:", user);
+        if (user?.role === "admin") {
+            document.getElementById("universities-link").style.display = "inline";
+        }
+    </script>
+        <script>
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const university_id = parseInt(document.getElementById('university').value);
+            const role = document.getElementById('role').value;
+
+            alert(`Email: ${email}, Password: ${password}, University ID: ${university_id}, Role: ${role}`);
+
+            const apiUrl = 'http://143.198.6.92/University_Database/register.php';
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        role,
+                        university_id
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Registration successful!');
+                    // Redirect or clear form here
+                } else {
+                    alert('Registration failed: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Something went wrong. Please try again later.');
+            }
+        });
+    </script>
+    </body>
+</html>

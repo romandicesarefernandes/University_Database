@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Create University</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>College Events</h1>
+            <nav id="main-nav">
+                <a href="index.html">Home</a> |
+                <a href="dashboard.html">Events</a> |
+                <a href="rsos.html">RSOs</a> |
+                <span id="universities-link" style="display: none;">
+                    | <a href="universities.html">Universities</a>
+                </span>
+            </nav>
+        </header>
+
+        <main>
+            <h2>Super Admin - Create University</h2>
+            <form id="universityForm">
+                <label>University Name:</label><br>
+                <input type="text" name="name"><br>
+
+                <label>Location:</label><br>
+                <input type="text" name="location"><br>
+
+                <label>Description:</label><br>
+                <textarea name="description"></textarea><br>
+
+                <label>Number of Students:</label><br>
+                <input type="number" name="num_students"><br>
+
+                <label>Image URL (optional):</label><br>
+                <input type="text" name="image"><br><br>
+
+                <button type="submit">Create University Profile</button>
+            </form>
+        </main>
+
+        <footer><p>&copy; 2025 College Events</p></footer>
+        <script>
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log("User Data:", user);
+        if (user?.role === "admin") {
+            document.getElementById("universities-link").style.display = "inline";
+        }
+    </script>
+        <script>
+document.getElementById('universityForm').addEventListener('submit', async function(event) {
+    event.preventDefault(); // prevent default form submission
+
+    const formData = new FormData(event.target);
+
+    const payload = {
+        name: formData.get('name'),
+        location: formData.get('location'),
+        description: formData.get('description'),
+        num_students: parseInt(formData.get('num_students'), 10)
+    };
+
+    try {
+        const response = await fetch('http://143.198.6.92/University_Database/createuniverity.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert('University created successfully!');
+            event.target.reset();
+        } else {
+            alert('Failed to create university.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while creating the university.');
+    }
+});
+</script>
+    </body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Create Event</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    </head>
+    <body>
+        <header>
+            <h1>College Events</h1>
+            <nav id="main-nav">
+                <a href="index.html">Home</a> |
+                <a href="dashboard.html">Events</a> |
+                <a href="rsos.html">RSOs</a> |
+                <span id="universities-link" style="display: none;">
+                    | <a href="universities.html">Universities</a>
+                </span>
+            </nav>
+        </header>
+        <main>
+            <h2>Create New Event</h2>
+            <form id="eventForm">
+                <!-- Hidden Inputs for Admin Data -->
+                <input type="hidden" name="admin_id" value="1">
+                <input type="hidden" name="role" value="admin">
+                <input type="hidden" name="university_id" value="2">
+
+                <label>Event Name:</label><br>
+                <input type="text" name="name"><br>
+
+                <label>Category:</label><br>
+                <select name="category">
+                    <option value="social">Social</option>
+                    <option value="fundraising">Fundraising</option>
+                    <option value="tech_talk">Tech Talk</option>
+                    <option value="other">Other</option>
+                </select><br>
+
+                <label>Description:</label><br>
+                <textarea name="description" rows="4"
+                    cols="50">
+               
+                </textarea><br>
+
+                <label>Date:</label><br>
+                <input type="date" name="date"><br>
+
+                <label>Time:</label><br>
+                <input type="time" name="time"><br>
+
+                <label>Location Name:</label><br>
+                <input type="text" name="location_name"><br>
+
+                <label>Contact Phone:</label><br>
+                <input type="tel" name="contact_phone"><br>
+
+                <label>Contact Email:</label><br>
+                <input type="email" name="contact_email"><br>
+
+                <label>Event Visibility:</label><br>
+                <select name="visibility">
+                    <option value="public">Public (visible to everyone)</option>
+                    <option value="private">Private (only students at your
+                        university)</option>
+                    <option value="rso_only">RSO Only (members of your
+                        RSO)</option>
+                </select><br>
+
+                <label>Associated RSO (if any):</label><br>
+                <input type="text" name="rso"><br>
+
+                <label>Select Location on Map:</label><br>
+                <div id="map" style="height: 300px; margin-bottom: 10px;"></div>
+                <button type="submit">Submit</button>
+            </form>
+        </main>
+        <footer><p>&copy; 2025 College Events</p></footer>
+        <script>
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log("User Data:", user);
+        if (user?.role === "admin") {
+            document.getElementById("universities-link").style.display = "inline";
+        }
+    </script>
+        <script>
+        document.getElementById('eventForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+ const userData = JSON.parse(localStorage.getItem("user"));
+    const role = userData?.role;
+    alert(latitude + " " + longitude);
+            const data = {
+                //admin_id: parseInt(form.admin_id.value),
+                role: role,
+                university_id: userData?.university_id,
+                rso_id: 1,
+                name: form.name.value,
+                admin_id: userData?.user_id, // Hardcoded for now, replace with actual admin ID
+                latitude: latitude,
+                longitude: longitude, 
+                category: form.category.value,
+                description: form.description.value,
+                event_time: `${form.date.value} ${form.time.value}:00`,
+                location_name: form.location_name.value,
+                contact_phone: form.contact_phone.value,
+                contact_email: form.contact_email.value,
+                visibility: form.visibility.value
+            };
+
+            console.log(data); // Debugging line to check the data being sent
+
+            try {
+                const response = await fetch('http://143.198.6.92/University_Database/createevent.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Event created successfully!');
+                    form.reset();
+                } else {
+                    alert('Failed to create event.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while submitting the event.');
+            }
+        });
+    </script>
+
+        <script>
+        let map = L.map('map').setView([37.7749, -122.4194], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker;
+
+        map.on('click', function(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            marker = L.marker([lat, lng]).addTo(map);
+            latitude = lat;
+            longitude = lng;
+          //  document.querySelector('input[name="latitude"]').value = lat;
+           // document.querySelector('input[name="longitude"]').value = lng;
+        });
+    </script>
+    </body>
+</html>

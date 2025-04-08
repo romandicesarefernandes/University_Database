@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>RSOs</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>College Events</h1>
+            <nav id="main-nav">
+                <a href="index.html">Home</a> |
+                <a href="dashboard.html">Events</a> |
+                <a href="rsos.html">RSOs</a> |
+                <span id="universities-link" style="display: none;">
+                    | <a href="universities.html">Universities</a>
+                </span>
+            </nav>
+        </header>
+
+        <main>
+            <h2>Create New RSO</h2>
+            <form id="rsoForm">
+                <label>RSO Name:</label><br>
+                <input type="text" name="rso_name" id="rso_name" required><br>
+
+                <label>Description:</label><br>
+                <textarea name="description" id="description" rows="4"
+                    required></textarea><br>
+
+                <label>Member Emails (4 others with same domain):</label><br>
+                <input type="email" name="member_email[]" required><br>
+                <input type="email" name="member_email[]" required><br>
+                <input type="email" name="member_email[]" required><br>
+                <input type="email" name="member_email[]" required><br><br>
+
+                <button type="submit">Create RSO</button>
+            </form>
+            <p id="responseMessage"></p>
+        </main>
+        <footer><p>&copy; 2025 College Events</p></footer>
+        <script>
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log("User Data:", user);
+        if (user?.role === "admin" ) {
+            document.getElementById("universities-link").style.display = "inline";
+        }
+    </script>
+        <script>
+document.getElementById('rsoForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const rsoName = document.getElementById('rso_name').value;
+    
+    const memberEmails = Array.from(document.getElementsByName('member_email[]')).map(input => input.value);
+    const description = document.getElementById('description').value;
+
+    // You might want to validate domain logic here before submitting
+
+    // Replace these IDs with actual IDs or dynamically fetch them if needed
+ const userData = JSON.parse(localStorage.getItem("user"));
+    const university_id = userData?.university_id;
+    const admin_id = userData?.user_id;
+
+
+    console.log("University ID:", university_id);
+    fetch('http://localhost/create_rso.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            university_id: university_id,
+            name: rsoName,
+            description: description,
+            admin_id: admin_id
+        })
+    })
+
+    .then(res => res.json())
+    .then(data => {
+        const message = document.getElementById('responseMessage');
+        if (data.status === 'success') {
+            message.textContent = "RSO created successfully!";
+            message.style.color = 'green';
+        } else {
+            message.textContent = "Error: " + data.message;
+            message.style.color = 'red';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById('responseMessage').textContent = "Unexpected error occurred.";
+    });
+        console.log("RSO Data:", {
+        university_id: university_id,
+        name: rsoName,
+        description: description,
+        admin_id: admin_id
+        
+    });
+});
+</script>
+
+    </body>
+</html>
