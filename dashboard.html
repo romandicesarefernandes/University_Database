@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Events - College Events</title>
+        <link rel="stylesheet" href="styles.css">
+        <style>
+        .columns {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .column {
+            width: 30%;
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+        .column h3 {
+            text-align: center;
+            background: #f0f0f0;
+            padding: 10px;
+            margin-top: 0;
+        }
+        .column p.subheader {
+            text-align: center;
+            font-style: italic;
+            margin: 0 0 15px;
+            color: #666;
+        }
+        .event {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ccc;
+        }
+        .event a {
+            color: #0073e6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .event a:hover {
+            text-decoration: underline;
+        }
+
+        .create-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 20px auto;
+            display: none; /* hidden by default */
+        }
+
+        .center {
+            text-align: center;
+        }
+
+       
+    </style>
+    </head>
+    <body>
+        <header>
+            <h1>College Events</h1>
+            <nav id="main-nav">
+                <a href="index.html">Home</a> |
+                <a href="dashboard.html">Events</a> |
+                <a href="rsos.html">RSOs</a> |
+                <span id="universities-link" style="display: none;">
+                    | <a href="universities.html">Universities</a>
+                </span>
+            </nav>
+        </header>
+        <main>
+            <div class="center">
+                <a class="create-btn" href="create_event.html"
+                    id="create-event-link">+ Create New Event</a>
+            </div>
+
+            <h2 style="text-align:center;">Events by Visibility</h2>
+            <div class="columns">
+                <div class="column">
+                    <h3>🌐 Public Events</h3>
+                    <p class="subheader">Available to everyone</p>
+                    <div class="event" id="public-events">
+
+                    </div>
+
+                </div>
+                <div class="column">
+                    <h3>🔒 Private Events</h3>
+                    <p class="subheader">Visible only to students of the host
+                        university</p>
+                    <div id="private-events"></div>
+                </div>
+                <div class="column">
+                    <h3>🧑‍🤝‍🧑 RSO Events</h3>
+                    <p class="subheader">Exclusive to members of the hosting
+                        RSO</p>
+                    <!-- REMOVE THESE -->
+                    <!-- <div class="event">
+        <a href="event.html">Chess Club Tournament</a><br>
+        Members of the Chess Club only.
+    </div>
+    <div class="event">
+        <a href="event.html">Hackathon Planning Meeting</a><br>
+        Exclusive to RSO Techies United.
+    </div> -->
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p style="text-align:center;">&copy; 2025 College Events</p>
+        </footer>
+        <script>
+            
+        const user2 = JSON.parse(localStorage.getItem("user"));
+        console.log("User Data:", user2);
+        if (user2?.role === "admin") {
+            document.getElementById("universities-link").style.display = "inline";
+        }
+    </script>
+        <script>
+// Fetch and display RSO events for the current user
+const rsoContainer = document.querySelector(".column:nth-child(3)"); // RSO column
+const rsoEventsDiv = document.createElement("div");
+rsoEventsDiv.id = "rso-events";
+rsoContainer.appendChild(rsoEventsDiv);
+
+const currentUser = JSON.parse(localStorage.getItem("user"));
+const id = currentUser?.user_id;
+console.log("Current User ID:", id);
+
+if (id) {
+    fetch("http://localhost/get_user_events.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ user_id: id })
+    })
+    .then(response => response.json())
+    .then(events => {
+        if (Array.isArray(events) && events.length > 0) {
+            events.forEach(event => {
+                const div = document.createElement("div");
+                div.className = "event";
+                div.innerHTML = `
+                    <a href="event.html?id=${event.event_id}">${event.name}</a><br>
+                    ${event.description}<br>
+                    <small><strong>Location:</strong> ${event.location_name} | <strong>Date:</strong> ${new Date(event.event_time).toLocaleString()}</small>
+                `;
+                rsoEventsDiv.appendChild(div);
+            });
+        } else {
+            rsoEventsDiv.innerHTML = "<p>No RSO events available for your RSOs.</p>";
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching RSO events:", error);
+        rsoEventsDiv.innerHTML = "<p>Error loading RSO events.</p>";
+    });
+} else {
+    rsoEventsDiv.innerHTML = "<p>User not found.</p>";
+}
+</script>
+
+        <script>
+  function navigateWithJSON() {
+    const data = {
+      name: "Kevin",
+      age: 30,
+    };
+
+    // Store JSON as string in localStorage
+    localStorage.setItem("userData", JSON.stringify(data));
+
+    // Navigate to another page
+    window.location.href = "receiver.html";
+  }
+</script>
+        <script>
+            
+    const userData = JSON.parse(localStorage.getItem("user"));
+    const role = userData?.role;
+
+    const createBtn = document.getElementById("create-event-link");
+            alert(role);
+    if (role === "admin"|| role === "rso_admin") {
+        createBtn.style.display = "inline-block"; // show button if admin
+    } else {
+        // Prevent direct access to create_event.html
+        if (window.location.pathname.includes("create_event.html")) {
+            alert("Access denied. Admins only.");
+            window.location.href = "index.html";
+        }
+    }
+</script>
+        <script>
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log("User Data:", user);
+        if (user?.role === "admin") {
+            document.getElementById("universities-link").style.display = "inline";
+        }
+    </script>
+        <script>
+
+
+    if (role === "admin" || role === "rso_admin") {
+        createBtn.style.display = "inline-block";
+    } else {
+        if (window.location.pathname.includes("create_event.html")) {
+            alert("Access denied. Admins only.");
+            window.location.href = "index.html";
+        }
+    }
+
+    // Fetch events and display only public ones
+    fetch('http://143.198.6.92/University_Database/getevents.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && Array.isArray(data.events)) {
+            let publicEvents = [];
+
+            if (role === "admin") {
+                publicEvents = data.events.filter(event => event.visibility === "public");
+            } else {
+                publicEvents = data.events.filter(event => event.visibility === "public" && event.approval_status === "approved");
+            }
+
+            const container = document.getElementById("public-events");
+
+            if (publicEvents.length === 0) {
+                container.innerHTML = "<p>No public events available.</p>";
+            } else {
+                publicEvents.forEach(event => {
+                    const div = document.createElement("div");
+                    div.className = "event";
+
+                    let approveButton = "";
+                    if (event.approval_status === "pending" && role === "admin") {
+                        approveButton = `<button onclick="approveEvent(${event.event_id})">Approve</button>`;
+                    }
+
+                    div.innerHTML = `
+                        <a href="event.html?id=${event.event_id}">${event.name}</a><br>
+                        ${event.description}<br>
+                        ${approveButton}
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching events:", error);
+        document.getElementById("public-events").innerHTML = "<p>Error loading events.</p>";
+    });
+</script>
+        <script>
+function approveEvent(eventId) {
+    fetch('http://localhost/approve.php', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ event_id: eventId }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === "Approval status updated to approved") {
+            alert("Event approved!");
+            location.reload(); // Refresh the page to update the event list
+        } else {
+            alert(data.error || "Failed to approve event.");
+        }
+    })
+    .catch(error => {
+        console.error("Approval error:", error);
+        alert("Error while approving event.");
+    });
+}
+</script>
+        <script>
+    const userUniversityId = userData?.university_id.toString(); // Get user's university ID
+
+    // Fetch events and display private events for same university
+    fetch('http://143.198.6.92/University_Database/getevents.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && Array.isArray(data.events)) {
+                alert(userUniversityId);
+                alert(data.events[0].university_id);
+                // Filter private events where university_id matches user's
+                const privateEvents = data.events.filter(event =>
+                    event.visibility === "private" &&
+                    event.university_id == userUniversityId
+                );
+               
+
+                const privateContainer = document.getElementById("private-events");
+
+                if (privateEvents.length === 0) {
+                    privateContainer.innerHTML = "<p>No private events available for your university.</p>";
+                } else {
+                    privateEvents.forEach(event => {
+                        const div = document.createElement("div");
+                        div.className = "event";
+                        div.innerHTML = `
+                            <a href="event.html?id=${event.event_id}">${event.name}</a><br>
+                            ${event.description}
+                        `;
+                        privateContainer.appendChild(div);
+                    });
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching private events:", error);
+            document.getElementById("private-events").innerHTML = "<p>Error loading private events.</p>";
+        });
+</script>
+
+    </body>
+</html>
